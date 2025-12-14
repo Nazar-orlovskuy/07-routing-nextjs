@@ -1,6 +1,6 @@
 "use client";
 
-import styles from '../notes/page.module.css';
+import styles from "../notes/page.module.css";
 import { useState, useCallback } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { fetchNotes } from "../../lib/api";
@@ -14,7 +14,11 @@ import type { FetchNotesResponse } from "../../types/noteApi";
 
 const PER_PAGE = 12;
 
-export default function NotesClient() {
+type NotesClientProps = {
+  tag?: string;
+};
+
+export default function NotesClient({ tag }: NotesClientProps) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [debounced] = useDebounce(search, 500);
@@ -26,8 +30,14 @@ export default function NotesClient() {
   }, []);
 
   const notesQuery = useQuery({
-    queryKey: ["notes", page, debounced],
-    queryFn: () => fetchNotes({ page, perPage: PER_PAGE, search: debounced }),
+    queryKey: ["notes", page, debounced, tag],
+    queryFn: () =>
+      fetchNotes({
+        page,
+        perPage: PER_PAGE,
+        search: debounced,
+        tag,
+      }),
     placeholderData: keepPreviousData,
   });
 
@@ -37,7 +47,6 @@ export default function NotesClient() {
 
   return (
     <div className={styles.app}>
-      
       {/* Toolbar */}
       <div className={styles.toolbar}>
         <SearchBox value={search} onChange={handleSearchChange} />

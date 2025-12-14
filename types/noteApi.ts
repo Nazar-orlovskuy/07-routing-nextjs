@@ -4,9 +4,11 @@ export interface FetchNotesParams {
   page?: number;
   perPage?: number;
   search?: string;
+  tag?: string;
+  sort?: string;
 }
 
 export interface FetchNotesResponse {
-   totalPages: 0;
+  totalPages: number;
   notes: Note[];
 }
