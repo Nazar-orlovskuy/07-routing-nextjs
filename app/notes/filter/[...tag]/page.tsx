@@ -6,10 +6,10 @@ type Props = {
   };
 };
 
-export default function FilteredNotesPage({ params }: Props) {
-  const tag = params.tag?.[0];
+export default async function FilteredNotesPage({ params }: Props) {
+  const { tag } = await params;
 
   return (
-    <NotesClient tag={tag === "all" ? undefined : tag} />
+    <NotesClient tag={tag?.[0]} />
   );
 }

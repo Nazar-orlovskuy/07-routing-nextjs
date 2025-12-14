@@ -16,9 +16,10 @@ export const fetchNotes = async ({
   page = 1,
   perPage = 12,
   search = "",
+  tag,
 }: FetchNotesParams): Promise<FetchNotesResponse> => {
   const { data } = await api.get<FetchNotesResponse>("/notes", {
-    params: { page, perPage, search },
+    params: { page, perPage, search, tag:tag==="all"?undefined:tag },
   });
 
   return data;
