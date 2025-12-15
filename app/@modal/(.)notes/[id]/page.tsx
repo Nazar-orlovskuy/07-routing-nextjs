@@ -1,4 +1,4 @@
-import NotePreview from "@/app/@modal/(.)notes/NotePreview";
+import NotePreview from "@/components/NotePreview/NotePreview";
 
 type Props = {
   params: {
@@ -6,11 +6,8 @@ type Props = {
   };
 };
 
-export default async function NoteModalPage({ params }: Props) {
+export default function NoteModalPage({ params }: Props) {
+  const { id } = params;
 
-  const { id } = await params
-
-  return (
-        <NotePreview noteId={id} />
-   );
+  return <NotePreview noteId={id} />;
 }
