@@ -1,4 +1,4 @@
-import styles from './NoteList.module.css';
+import styles from "./NoteList.module.css";
 import Link from "next/link";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteNote } from "../../lib/api";
@@ -16,7 +16,7 @@ export default function NoteList({ notes }: NoteListProps) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notes"] }),
   });
 
-   return (
+  return (
     <ul className={styles.list}>
       {notes.map((note) => (
         <li key={note.id} className={styles.listItem}>
@@ -34,13 +34,12 @@ export default function NoteList({ notes }: NoteListProps) {
               </Link>
 
               <button
-  className={styles.button}
-  onClick={() => mutation.mutate(note.id)}
-  disabled={mutation.isPending}
->
-  {mutation.isPending ? "Deleting..." : "Delete"}
-</button>
-
+                className={styles.button}
+                onClick={() => mutation.mutate(note.id)}
+                disabled={mutation.isPending}
+              >
+                {mutation.isPending ? "Deleting..." : "Delete"}
+              </button>
             </div>
           </div>
         </li>

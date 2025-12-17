@@ -1,20 +1,80 @@
 "use client";
 
+import styles from "@/app/notes/page.module.css";
+import { useState, useCallback } from "react";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { fetchNotes } from "@/lib/api";
+import { useDebounce } from "use-debounce";
 import NoteList from "@/components/NoteList/NoteList";
 import Pagination from "@/components/Pagination/Pagination";
-// import { useSearchParams } from "next/navigation";
+import Modal from "@/components/Modal/Modal";
+import NoteForm from "@/components/NoteForm/NoteForm";
+import SearchBox from "@/components/SearchBox/SearchBox";
+import type { FetchNotesResponse } from "@/types/noteApi";
 
-export default function NotesClient() {
-//   const searchParams = useSearchParams();
+const PER_PAGE = 12;
 
-  const handlePageChange = (page: number) => {
-    console.log("New page:", page); // або роби тут реальну логіку пагінації
-  };
+type NotesClientProps = {
+  tag?: string;
+};
+
+export default function NotesClient({ tag }: NotesClientProps) {
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [debounced] = useDebounce(search, 500);
+  const [isModal, setIsModal] = useState(false);
+
+  const handleSearchChange = useCallback((value: string) => {
+    setSearch(value);
+    setPage(1);
+  }, []);
+
+  const notesQuery = useQuery({
+    queryKey: ["notes", page, debounced, tag],
+    queryFn: () =>
+      fetchNotes({
+        page,
+        perPage: PER_PAGE,
+        search: debounced,
+        tag,
+      }),
+    placeholderData: keepPreviousData,
+  });
+
+  const data = notesQuery.data as FetchNotesResponse | undefined;
+  const notes = data?.notes ?? [];
+  const totalPages = data?.totalPages ?? 0;
 
   return (
-    <>
-      <NoteList notes={[]} />
-      <Pagination pageCount={0} currentPage={0} onPageChange={handlePageChange} />
-    </>
+    <div className={styles.app}>
+      <div className={styles.toolbar}>
+        <SearchBox value={search} onChange={handleSearchChange} />
+
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={page}
+            pageCount={totalPages}
+            onPageChange={setPage}
+          />
+        )}
+
+        <button className={styles.button} onClick={() => setIsModal(true)}>
+          Create note +
+        </button>
+      </div>
+
+      <main>
+        {notesQuery.isLoading && <p>Loading notes...</p>}
+        {notesQuery.isError && <p>Error loading notes.</p>}
+        {!notesQuery.isLoading && notes.length === 0 && <p>No notes found.</p>}
+        {notes.length > 0 && <NoteList notes={notes} />}
+      </main>
+
+      {isModal && (
+        <Modal onClose={() => setIsModal(false)}>
+          <NoteForm onClose={() => setIsModal(false)} />
+        </Modal>
+      )}
+    </div>
   );
 }

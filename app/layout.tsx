@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import TanStackProvider from "../components/TanStackProvider/TanStackProvider";
@@ -17,7 +16,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-
 export const metadata: Metadata = {
   title: "NoteHub",
   description: "Simple note-taking app",
@@ -25,8 +23,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  modal,
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -35,6 +35,7 @@ export default function RootLayout({
           <Header />
           <main className="rootMain">{children}</main>
           <Footer />
+          {modal}
         </TanStackProvider>
       </body>
     </html>
