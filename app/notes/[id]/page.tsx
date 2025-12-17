@@ -1,4 +1,4 @@
-import styles from "../Home.module.css";
+import styles from "@/app/Home.module.css";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { fetchNotes } from "@/lib/api";
 import getQueryClient from "@/lib/getQueryClient";
